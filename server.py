@@ -5,20 +5,27 @@ import time
 import random
 import subprocess
 
+
+
+
 def processar_arquivo (file_name):
-	answer_file = file_name.replace(".jpg",".txt")
-	os.system("./darknet detector test cfg/coco.data cfg/yolov3.cfg yolov3.weights " + str (file_name) + " >> "+ str (answer_file))
-	#subprocess.check_output(["./darknet", "detector", "test", "cfg/coco.data","cfg/yolov3.cfg", "yolov3.weights", file_name,">>", answer_file])
-	resultado = open (answer_file, "r")
-	retorno = ""	
-	for linha in resultado.readlines():
-		retorno += str(linha)
-	return retorno
+	#Experimento REAL COM DEEP LEARNING ???
+	if (False):
+		answer_file = file_name.replace(".jpg",".txt")
+		os.system("./darknet detector test cfg/coco.data cfg/yolov3.cfg yolov3.weights " + str (file_name) + " >> "+ str (answer_file))
+		#subprocess.check_output(["./darknet", "detector", "test", "cfg/coco.data","cfg/yolov3.cfg", "yolov3.weights", file_name,">>", answer_file])
+		resultado = open (answer_file, "r")
+		retorno = ""	
+		for linha in resultado.readlines():
+			retorno += str(linha)
+		return retorno
+	else:
+		return "Imagem "+ str(file_name) + " foi processada com sucesso no servidor deeplearnig"
 
 
 
-HOST = '150.165.138.39'              # Endereco IP do Servidor
-PORT = 5000            # Porta que o Servidor esta
+HOST = '150.165.138.190'         # Endereco IP do Servidor
+PORT = 5000           		 # Porta que o Servidor esta
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 orig = (HOST, PORT)
 tcp.bind(orig)
