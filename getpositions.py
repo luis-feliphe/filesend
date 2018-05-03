@@ -35,6 +35,7 @@ import struct
 from datetime import datetime
 from sensor_msgs.msg import LaserScan
 getTime = lambda: int(round(time.time() * 1000))
+from pynput.keyboard import Key, Listener
 
 import math
 RATE=1
@@ -43,12 +44,35 @@ RATE=1
 global posicao
 posicao = None
 
+lista = []
+global primeiro
+primeiro = True
+
+def on_press(key):
+	global posicao
+	if (key == Key.space):
+		x, y, z = getxy(posicao)
+		lista.append("["+str(x)+","+str(y)+","+str(z)+"]")
+	elif( key == Key.esc):
+#		print('{0} pressed'.format(key))
+		print "["
+		for i in lista:
+			print str(i)
+		print "]"
+		return False
+#	sys.exit()
 
 def degrees(value):
 	return (value*180)/math.pi#math.degrees(value)#((value* 180.0)/math.pi)
 def getpos(odom):
+	global primeiro
+	if primeiro:
+		print "Primeiro dado recebido"
+		primeiro = False
+	global posicao
+	posicao = odom
 	x, y, z = getxy (odom)
-	print "X = "+ str(x) + "\tY =" + str(y) + "\tZ = " + str(z)
+#	print "X = "+ str(x) + "\tY =" + str(y) + "\tZ = " + str(z)
 def getDataFromRos():
 	global posicao
 	mx, my, mz = getxy (posicao)
@@ -69,10 +93,17 @@ def getxy (odom):
 	return odom.pose.pose.position.x,  odom.pose.pose.position.y, getDegreesFromOdom (odom)#degrees(yall)
 
 global myId
-rospy.init_node("Tapa_na_xereca")
+rospy.init_node("path_generator")
 rospy.Subscriber("/odom", Odometry, getpos)
 
 r = rospy.Rate(RATE)
+
+
+
+with Listener(
+        on_press=on_press,
+        ) as listener:
+    listener.join()
 	
 try:
 	while not rospy.is_shutdown():
