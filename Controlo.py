@@ -32,6 +32,10 @@ class Controlo :
 		return self.mmx, self.mmy, self.mmz
 	def walkon(self):
 		return self.VEL_MAX, 0 #linear and angular modificado 1
+	def walkright(self):
+		return 0.01, -self.VEL_MAX_ANG #linear and angular modificado -0.5
+	def walkleft(self):
+		return 0.01, self.VEL_MAX_ANG#linear and angular modificado 0.5
 	def walkhorario(self):
 		return 0.04, -self.VEL_MAX_ANG #linear and angular modificado -0.5
 	def walkantihorario(self):
@@ -101,6 +105,8 @@ class Controlo :
 		return False, 1000, 800, 1000
 
 
+
+
 	def inPosition(self):
 		x, y ,z = self.whereImGoing()
 		mx, my, mz = self.myPosition()
@@ -112,7 +118,7 @@ class Controlo :
 
 	def walk (self):
 		x, y,z  = self.whereImGoing()
-		#print "Going to : (" + str (x) + " " + str (y) + " " + str(z)
+#		print "Going to : (" + str (x) + " " + str (y) + " " + str(z)
 		mx, my, mz = self.myPosition()
 	        if (not self.inPosition()):
 	                orient, ang, mz, hip = self.isOriented()
@@ -159,10 +165,26 @@ class Controlo :
 						return self.walkhorarioon(velocidade)
 					else: 
 						return self.walkantihorarioon(velocidade)
-		self.changeTarget()
-		return 0, 0
+		#Na posicao, mas precisa estar no angulo correto
+		else:
+			#muito Orientado
+			a = max ([mz, z])
+			b = min ([mz, z])
+			if (int (mz) == int (z)or (a -b <3)):
+                        	return 0,0
 
-	def start(self, x, y, z , mx, my, mz) :
+			if ((z-mz)>= 0):
+				if (z-mz)< 180:
+					return self.walkleft()
+				else:
+					return self.walkright()
+			else:
+				if (z-mz)< 180:
+					return self.walkright()
+				else:
+					return self.walkleft()
+
+	def start(self, x, y, z , mx, my, mz):
 		#where im going
 		self.lex  = x
 		self.ley  = y
